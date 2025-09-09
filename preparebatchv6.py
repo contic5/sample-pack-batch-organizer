@@ -17,8 +17,8 @@ name="Batch"
 #If you do not set the name, then you will be unable to read the original excel file.
 
 #This is the first batch you want to complete and the last batch you want to complete.
-min_batch=2763
-max_batch=2764
+min_batch=2813
+max_batch=2813
 if min_batch>max_batch:
     min_batch,max_batch=max_batch,min_batch
 
@@ -46,7 +46,7 @@ def get_batch_name(row):
     batch_name= batch_name.strftime('%m/%d/%Y')
     return batch_name
 
-def writedata(data_sheet,name):
+def writedata(data_sheet,name,target_folder="Batches_Completed"):
     letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     workbook = openpyxl.Workbook()
     sheet = workbook.active
@@ -83,7 +83,7 @@ def writedata(data_sheet,name):
 
     for i in range(len(maxlengths)):
         sheet.column_dimensions[letters[i]].width = fontwidth*(maxlengths[i])
-    workbook.save("Batches_Completed/"+name+extendname+".xlsx",)
+    workbook.save(f"{target_folder}/"+name+extendname+".xlsx",)
 
 def main():
     for i in range(min_batch,max_batch+1):

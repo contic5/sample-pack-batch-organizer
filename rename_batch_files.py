@@ -12,7 +12,7 @@ for count, filename in enumerate(os.listdir(folder)):
     if(using_excel):
         workbook=openpyxl.load_workbook(folder+"/"+filename)
         sheet = workbook.active
-        cell_obj = sheet.cell(row = 3, column = 5)
+        cell_obj = sheet.cell(row = 3, column = 6)
 
         #Get batch number from cell E3. Cell row 3 column 5
         batch_num=int(cell_obj.value)
@@ -23,5 +23,3 @@ for count, filename in enumerate(os.listdir(folder)):
     else:
         dst=folder+"/"+"Batch "+str(batch_num)+".xlsx"
     os.rename(src, dst)
-    
-

@@ -1,4 +1,7 @@
-All_Batches/*
-Batches/*
-Batches_Completed/*
-old_code
+All_Batches/
+Batches/
+Batches_Completed/
+Batch_Summary/
+Batches_To_Rename/
+old_code/
+__pycache__
