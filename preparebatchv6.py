@@ -4,12 +4,15 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from pathlib import Path
 import functools
 import numbers
+import os
+import time
 
 #Pandas made this much more efficient. Ignore V5.
 
 #SETTINGS SECTION
 #MODIFY THIS SECTION
-
+#------------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------------#
 #Set the name of your Excel file here. 
 # Do not include the space or the number in the name.
 # Do not include the .xlsx in the name.
@@ -17,15 +20,20 @@ name="Batch"
 #If you do not set the name, then you will be unable to read the original excel file.
 
 #This is the first batch you want to complete and the last batch you want to complete.
-min_batch=2813
-max_batch=2813
+min_batch=2966
+max_batch=2966
 if min_batch>max_batch:
     min_batch,max_batch=max_batch,min_batch
 
 #This is the text that will be added on to the batch file name.
 extendname=""
 
+#This determines if each completed file will be opened after it is prepared.
+opening_output_files=True
+
 #END OF MODIFIABLE SECTION
+#------------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------------#
 
 main_columns=["#","Reference","Ship To Company","Batch ID","Batch Name"]
 
@@ -42,6 +50,12 @@ def get_batch_name(row):
         batch_year="20"+batch_year
         size=len(batch_name)
         batch_name=batch_name[0:size-2]+batch_year
+    
+    if len(batch_name)>12:
+        return batch_name
+    
+    batch_name=batch_name.strip()
+
     batch_name=pd.to_datetime(batch_name,format="%m/%d/%Y")
     batch_name= batch_name.strftime('%m/%d/%Y')
     return batch_name
@@ -83,7 +97,12 @@ def writedata(data_sheet,name,target_folder="Batches_Completed"):
 
     for i in range(len(maxlengths)):
         sheet.column_dimensions[letters[i]].width = fontwidth*(maxlengths[i])
-    workbook.save(f"{target_folder}/"+name+extendname+".xlsx",)
+    
+    write_file=f"{target_folder}/{name}{extendname}.xlsx"
+    workbook.save(write_file)
+    if opening_output_files:
+        os.startfile(f"{os.getcwd()}/{write_file}")
+        input("Press enter to continue")
 
 def main():
     for i in range(min_batch,max_batch+1):
@@ -92,9 +111,17 @@ def main():
         if(path.is_file()):
             print("Getting",path)
             sheet=pd.read_excel(file_name)
+
+            #Get the batch name
             sheet["Batch Name"]=sheet.apply(get_batch_name,axis=1)
+
+            #Only keep sample packs with the correct SKU.
             sheet=sheet[sheet["SKU/Quantity"]=="21354(1)"]
+
+            #Get rid of all unimportant columns
             sheet=sheet[main_columns]
+
+            #Sort by ship to company
             sheet=sheet.sort_values(by="Ship To Company")
             writedata(sheet,f"{name} {i}")
         else:

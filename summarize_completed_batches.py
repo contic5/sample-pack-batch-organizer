@@ -1,9 +1,11 @@
 import pandas as pd
 
+#The first sample pack batch I completed
 start=2129
+
 end=9999
 
-#Will likely reach 150 batches and 10000 total sample packs soon.
+#The sample pack Batch organizer has organized over 170 batches and over 12500 sample packs.
 
 def main():
     total_batches=0
